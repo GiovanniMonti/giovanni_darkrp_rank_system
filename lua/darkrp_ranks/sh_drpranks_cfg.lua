@@ -1,3 +1,16 @@
+JRS.CFG = JRS.CFG or {}
+
+JRS.CFG.Prefix = "!"
+-- the prefix for the command, be smart about it.
+JRS.CFG.PromoCommand = JRS.CFG.Prefix .. "gpromote"
+-- chat command used to promote
+JRS.CFG.DemoCommand = JRS.CFG.Prefix .. "gdemote" 
+-- chat command used to demote
+
+JRS.CFG.AddRankToJobName = true
+-- does this : jobname (rankname)
+
+
 --[[
     Config Usage & formatting.
 
@@ -22,16 +35,6 @@
         CanPromote : If a rank can promote ranks lower than itself or not. (boolean - true or false )
         MaxPromoRank : The highest rank this rank can promote. only if CanPromote = true. (integer)
 ]]
-
-JRS_Prefix = "!"
- -- the prefix for the command, be smart about it.
-JRS_PromoCommand = JRS_Prefix .. "gpromote"
- -- chat command used to promote
-JRS_DemoCommand = JRS_Prefix .. "gdemote" 
--- chat command used to demote
-
-JRS_AddRankToJobName = true
--- does this : jobname (rankname)
 
 local function JRS_InitRanks() 
 timer.Simple(3, function()

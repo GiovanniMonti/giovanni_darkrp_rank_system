@@ -1,11 +1,10 @@
-DrpRanksPlayerData = DrpRanksPlayerData or {}
+JRS.DrpRanksPlayerData = JRS.DrpRanksPlayerData or {}
 
-hook.Add("Initialize", "drpRanksDBCreate", function()
+hook.Add("Initialize", "jrs_DBCreate", function()
     if file.Exists("drpranksdata/", "DATA") then
         local f, _ = file.Find("drpranksdata/*.txt", "DATA")
         for k,v in pairs( f ) do
-            DrpRanksPlayerData[ string.Left(v, 17) ] = util.JSONToTable( file.Read("drpranksdata/"..v,"DATA") ) or {}
-            print(v)
+            JRS.DrpRanksPlayerData[ string.Left(v, 17) ] = util.JSONToTable( file.Read("drpranksdata/"..v,"DATA") ) or {}
         end
     else
         file.CreateDir("drpranksdata")
@@ -14,28 +13,28 @@ hook.Add("Initialize", "drpRanksDBCreate", function()
 
 end)
 
-hook.Add("PlayerInitialSpawn", "gofuckyourself", function(ply)
+hook.Add("PlayerInitialSpawn", "jrs_InitPlyDb", function(ply)
 
-    DrpRanksPlayerData[ply:SteamID64()] = DrpRanksPlayerData[ply:SteamID64()] or {}
+    JRS.DrpRanksPlayerData[ply:SteamID64()] = JRS.DrpRanksPlayerData[ply:SteamID64()] or {}
     
 end)
 
-hook.Add("PlayerSpawn", "giveyouarankdickhead", function(ply)
-    DrpRanksPlayerData[ply:SteamID64()][ply:Team()] = DrpRanksPlayerData[ply:SteamID64()][ply:Team()] or {}
+hook.Add("PlayerSpawn", "jrs_managespawn", function(ply)
+    JRS.DrpRanksPlayerData[ply:SteamID64()][ply:Team()] = JRS.DrpRanksPlayerData[ply:SteamID64()][ply:Team()] or {}
     
     ply:JRS_ManageSpawn()
 
 end)
 
-function SaveEntireDB()
-   for k,v in pairs(DrpRanksPlayerData) do
-        file.Write( "drpranksdata/" .. k .. ".txt", util.TableToJSON( DrpRanksPlayerData[k] ) )
+function JRS:SaveEntireDB()
+   for k,v in pairs(self.DrpRanksPlayerData) do
+        file.Write( "drpranksdata/" .. k .. ".txt", util.TableToJSON( self.DrpRanksPlayerData[k] ) )
    end
 
 end
 
-function UpdatePlyDB(steamID)
-    file.Write( "drpranksdata/" .. steamID .. ".txt", util.TableToJSON( DrpRanksPlayerData[steamID] ) )
+function JRS:UpdatePlyDB(steamID)
+    file.Write( "drpranksdata/" .. steamID .. ".txt", util.TableToJSON( self.DrpRanksPlayerData[steamID] ) )
 end
 
 util.AddNetworkString( "LegacyNotifySv" )
@@ -46,7 +45,7 @@ local NOTIFY_UNDO = 2
 local NOTIFY_HINT = 3
 local NOTIFY_CLEANUP = 4
 
-function LegacyNotifyPlayer(ply, text, type, length)
+function JRS.LegacyNotifyPlayer(ply, text, type, length)
     length = length or 2
     net.Start("LegacyNotifySv")
         net.WriteString(text)
@@ -78,12 +77,13 @@ local meta = FindMetaTable("Player")
 
 function meta:SetRank(RankID)
     local jobID = self:Team() 
-    if JobRankTables[jobID] then
+    if JRS.JobRankTables[jobID] then
         self:SetNWInt("JobRank", RankID)
 
-        local JobName = team.GetName(jobID) .. " ( " .. self:GetRankName() .. " )"
-        self:setDarkRPVar("job", JobName)
-
+        if JRS.CFG.AddRankToJobName then
+            local JobName = team.GetName(jobID) .. " ( " .. self:GetRankName() .. " )"
+            self:setDarkRPVar("job", JobName)
+        end
     end
 
 end
@@ -91,26 +91,25 @@ end
 function meta:RankPromote(num)
     if num == self:GetRank() then return end
     
-    if num and JobRankTables[self:Team()] then
+    if num and JRS.JobRankTables[self:Team()] then
         self:SetRank( num )
         self:RanksLoadout()
         
-        DrpRanksPlayerData[self:SteamID64()] = DrpRanksPlayerData[self:SteamID64()] or {}
-        DrpRanksPlayerData[self:SteamID64()][self:Team()] = DrpRanksPlayerData[self:SteamID64()][self:Team()] or {}
-        -- this is painfull to write. i'm sorry about it.
-        DrpRanksPlayerData[self:SteamID64()][self:Team()].Rank = num
-        UpdatePlyDB( self:SteamID64())
+        JRS.DrpRanksPlayerData[self:SteamID64()] = JRS.DrpRanksPlayerData[self:SteamID64()] or {}
+        JRS.DrpRanksPlayerData[self:SteamID64()][self:Team()] = JRS.DrpRanksPlayerData[self:SteamID64()][self:Team()] or {}
+        JRS.DrpRanksPlayerData[self:SteamID64()][self:Team()].Rank = num
+        JRS:UpdatePlyDB( self:SteamID64())
     end
 
 end
 
 function meta:JRS_ManageSpawn()
 
-    if DrpRanksPlayerData[self:SteamID64()][self:Team()].Rank then
-        self:SetRank(DrpRanksPlayerData[self:SteamID64()][self:Team()].Rank)
+    if JRS.DrpRanksPlayerData[self:SteamID64()][self:Team()].Rank then
+        self:SetRank(JRS.DrpRanksPlayerData[self:SteamID64()][self:Team()].Rank)
     else 
       self:SetRank(0)
-      DrpRanksPlayerData[self:SteamID64()][self:Team()].Rank = 0
+      JRS.DrpRanksPlayerData[self:SteamID64()][self:Team()].Rank = 0
     end
 
     self:RanksLoadout()
@@ -125,12 +124,12 @@ function meta:PlayerCanPromote(sPly, rank)
     if !sPly:GetJobRanksTable() then return false end
     
     if ( rank >= sPly:GetJobRanksTable().MaxRank and rank >= sPly:GetJobRanksTable().MaxPromoRank[self:GetRank()]  ) then 
-        LegacyNotifyPlayer(self, "The maximum rank on this job has been reached. (or you're trying to promote over the max)", NOTIFY_ERROR , 4)
+        JRS.LegacyNotifyPlayer(self, "The maximum rank on this job has been reached. (or you're trying to promote over the max)", NOTIFY_ERROR , 4)
         return false
     end 
 
     if ( rank < 0 ) then 
-        LegacyNotifyPlayer(self, "The minimum rank on this job has been reached.(why are you using a negative number??)", NOTIFY_ERROR , 4)
+        JRS.LegacyNotifyPlayer(self, "The minimum rank on this job has been reached.(why are you using a negative number??)", NOTIFY_ERROR , 4)
         return false
     end
 
@@ -140,11 +139,11 @@ function meta:PlayerCanPromote(sPly, rank)
 
     if self:GetRank() > sPly:GetRank() and rank < self:GetRank() and rank < sPly:GetJobRanksTable().MaxPromoRank[self:GetRank()]  then
         for _, v in pairs( PlyRankTbl.OtherPromoPerms ) do
-            if JobRankTables[sPly:Team()] == v then return true end
+            if JRS.JobRankTables[sPly:Team()] == v then return true end
         end
     end
 
-    LegacyNotifyPlayer(self, "You do not have the permissions to promote/demote " .. sPly:Nick() .. " to " .. sPly:GetRankName(), NOTIFY_ERROR , 4)
+    JRS.LegacyNotifyPlayer(self, "You do not have the permissions to promote/demote " .. sPly:Nick() .. " to " .. sPly:GetRankName(), NOTIFY_ERROR , 4)
 
     return false
     
@@ -180,15 +179,15 @@ end
 
 hook.Add("PlayerSay", "JRS_ChatCommands", function(ply, text)
 
-    local StartsWithPromo = string.StartWith(string.lower(text), JRS_PromoCommand.." ")
-    local StartsWithDemo = string.StartWith(string.lower(text), JRS_DemoCommand.." ")
+    local StartsWithPromo = string.StartWith(string.lower(text), JRS.CFG.PromoCommand .." ")
+    local StartsWithDemo = string.StartWith(string.lower(text), JRS.CFG.DemoCommand.." ")
 
     if StartsWithPromo or StartsWithDemo then
 
         local txt = string.Explode( " ", text) 
 
         if tonumber(txt[#txt]) and #txt < 2 then
-            LegacyNotifyPlayer(ply, "Command Usage : " .. txt[1] .. " " .. "<text PlayerName / SteamID / SteamID64> <number RankID>(optional)", NOTIFY_ERROR , 4)
+            JRS.LegacyNotifyPlayer(ply, "Command Usage : " .. txt[1] .. " " .. "<text PlayerName / SteamID / SteamID64> <number RankID>(optional)", NOTIFY_ERROR , 4)
             return ""
         end
 
@@ -220,19 +219,19 @@ hook.Add("PlayerSay", "JRS_ChatCommands", function(ply, text)
             
             if tonumber(txt[#txt]) then
                 if ply:PromoDemoPlayer(promotee, plrank, true) then
-                    LegacyNotifyPlayer("BROADCAST", ply:Nick() .. " " .. PromoOrDemoStr .. promotee:Nick() .. " to " .. ply:GetRankName(), NOTIFY_GENERIC , 3)
+                    JRS.LegacyNotifyPlayer("BROADCAST", ply:Nick() .. " " .. PromoOrDemoStr .. promotee:Nick() .. " to " .. ply:GetRankName(), NOTIFY_GENERIC , 3)
                     return ""
                 end
             elseif ply:PromoDemoPlayer(promotee, plrank, false) then
-                LegacyNotifyPlayer("BROADCAST", ply:Nick() .. " " .. PromoOrDemoStr .. promotee:Nick() .. " to " .. ply:GetRankName(), NOTIFY_GENERIC , 3)
+                JRS.LegacyNotifyPlayer("BROADCAST", ply:Nick() .. " " .. PromoOrDemoStr .. promotee:Nick() .. " to " .. ply:GetRankName(), NOTIFY_GENERIC , 3)
                 return ""
             else
-                LegacyNotifyPlayer(ply, "Command Usage : " .. txt[1] .. " " .. "<text PlayerName / SteamID / SteamID64> <number RankID>(optional)>", NOTIFY_ERROR , 4)
+                JRS.LegacyNotifyPlayer(ply, "Command Usage : " .. txt[1] .. " " .. "<text PlayerName / SteamID / SteamID64> <number RankID>(optional)>", NOTIFY_ERROR , 4)
                 return ""
             end
         else
-            LegacyNotifyPlayer(ply, "No player found with that name/SteamID/SteamID64", NOTIFY_ERROR , 3)
-            LegacyNotifyPlayer(ply, "Command Usage : " .. txt[1] .. " " .. "< PlayerName / SteamID / SteamID64> <number RankID>(optional)>", NOTIFY_ERROR , 3)
+            JRS.LegacyNotifyPlayer(ply, "No player found with that name/SteamID/SteamID64", NOTIFY_ERROR , 3)
+            JRS.LegacyNotifyPlayer(ply, "Command Usage : " .. txt[1] .. " " .. "< PlayerName / SteamID / SteamID64> <number RankID>(optional)>", NOTIFY_ERROR , 3)
             return ""
         end
     end

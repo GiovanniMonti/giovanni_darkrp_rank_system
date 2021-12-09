@@ -63,15 +63,7 @@ CAMI.RegisterPrivilege({
     MinAccess = "user"
 })
 
-function IsPlyNick( nick )
-    for _, v in pairs( player.GetAll() ) do
-        
-        if string.find( string.lower( v:Nick() ), string.lower( nick ) ) then return v end
-        if (v:SteamID64() == nick) or (v:SteamID() == nick) then return v end
-        
-    end
-    return false
-end
+util.AddNetworkString( "JRSClientMenu" )
 
 local meta = FindMetaTable("Player")
 
@@ -177,10 +169,18 @@ function meta:PromoDemoPlayer(sPly, rank, setrank)
     
 end
 
+util.AddNetworkString("OpenJRSMenu")
+
 hook.Add("PlayerSay", "JRS_ChatCommands", function(ply, text)
 
-    local StartsWithPromo = string.StartWith(string.lower(text), JRS.CFG.PromoCommand .." ")
-    local StartsWithDemo = string.StartWith(string.lower(text), JRS.CFG.DemoCommand.." ")
+    if string.StartWith( string.lower(text), JRS.CFG.OpenMenuCommand) then
+        net.Start("OpenJRSMenu")
+        net.Send(ply)
+        return ""
+    end
+
+    local StartsWithPromo = string.StartWith(string.lower(text), JRS.CFG.PromoCommand .. " ")
+    local StartsWithDemo = string.StartWith(string.lower(text), JRS.CFG.DemoCommand .. " ")
 
     if StartsWithPromo or StartsWithDemo then
 
@@ -241,7 +241,7 @@ end )
 function meta:RanksLoadout()
     
     local loadout = self:GetJobRanksTable().Loadout[self:GetRank()]
-
+    
     if loadout then
         for _, v in pairs( loadout ) do
             self:Give(v)

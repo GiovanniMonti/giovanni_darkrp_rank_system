@@ -1,7 +1,7 @@
 local meta = FindMetaTable("Player")
 
-JRS.JobRanks = {}
-JRS.JobRankTables = {}
+JRS.JobRanks = JRS.JobRanks or {}
+JRS.JobRankTables = JRS.JobRankTables or {}
 
 local LastID = nil
 
@@ -48,7 +48,7 @@ hook.Add("loadCustomDarkRPItems", "drpranks_initshared_postdarkrp", function()
         if not IsValid(self) then DarkRP.error("Attempt to call Name/Nick/GetName on a non-existing player!", SERVER and 1 or 2) end
 
         local Rank = self:GetRank()
-        JobRankTbl = self:JobRanksTable()
+        JobRankTbl = self:GetJobRanksTable()
         local Nick = GAMEMODE.Config.allowrpnames and self:getDarkRPVar("rpname") or self:SteamName()
         if JobRankTbl and JobRankTbl.Prefix and JobRankTbl.Prefix[Rank] then
             local PrefixSep = "."
@@ -74,20 +74,30 @@ function meta:GetRank()
     return self:GetNWInt("JobRank")
 end
 
-function meta:JobRanksTable()
+function meta:GetJobRanksTable()
     local loc = JRS.JobRankTables[self:Team()]
     return JRS.JobRanks[loc]
 
 end
 
 function meta:GetRankName()
-    return self:JobRanksTable().RankName[self:GetRank()]
+    return self:GetJobRanksTable().RankName[self:GetRank()]
 end
 
 function meta:GetRankNamePrefix()
-    return self:JobRanksTable().Prefix[self:GetRank()]
+    return self:GetJobRanksTable().Prefix[self:GetRank()]
 end
 
 function meta:GetRankVar(var)
-    return self:JobRanksTable()[var[self:GetRank()]]
+    return self:GetJobRanksTable()[var][self:GetRank()]
+end
+
+function IsPlyNick( nick )
+    for _, v in pairs( player.GetAll() ) do
+        
+        if string.find( string.lower( v:Nick() ), string.lower( nick ) ) then return v end
+        if (v:SteamID64() == nick) or (v:SteamID() == nick) then return v end
+        
+    end
+    return false
 end

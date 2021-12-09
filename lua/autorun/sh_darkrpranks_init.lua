@@ -8,6 +8,7 @@ if SERVER then
     print("--------------------------------")
 
     include("darkrp_ranks/sv_drpranks.lua")
+
     AddCSLuaFile("darkrp_ranks/sh_drpranks.lua")
     AddCSLuaFile("darkrp_ranks/sh_drpranks_cfg.lua")
     AddCSLuaFile("darkrp_ranks/cl_drpranks.lua")

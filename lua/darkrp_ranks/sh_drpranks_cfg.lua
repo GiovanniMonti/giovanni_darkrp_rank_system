@@ -7,6 +7,8 @@ JRS.CFG.PromoCommand = JRS.CFG.Prefix .. "gpromote"
 JRS.CFG.DemoCommand = JRS.CFG.Prefix .. "gdemote" 
 -- chat command used to demote
 
+JRS.CFG.OpenMenuCommand = JRS.CFG.Prefix .. "gmenu"
+
 JRS.CFG.AddRankToJobName = true
 -- does this : jobname (rankname)
 

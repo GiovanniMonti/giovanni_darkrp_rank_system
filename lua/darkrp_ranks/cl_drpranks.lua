@@ -35,6 +35,7 @@ function JRS:OpenMenu()
         draw.RoundedBox(8, 0, 0, wi, hi, FrameColor)
     end
 
+    
 
     local PlyList = vgui.Create("DListView", Frame)
 
@@ -50,10 +51,26 @@ function JRS:OpenMenu()
     for _,v in pairs( player.GetHumans() ) do
         PlyList:AddLine( v:Nick(), v:SteamID(), v:SteamID64() )
     end
-
-
+    
     function PlyList:OnRowRightClick(lineID, line)
+        local rMenu = DermaMenu()
 
+        rMenu:AddOption("Copy SteamID", function()
+            SetClipboardText(line:GetColumnText(2))
+        end)
+    
+        rMenu:AddOption("Copy SteamID64", function()
+            SetClipboardText(line:GetColumnText(3))
+        end)
+
+        rMenu:AddOption("Fast Promote", function()
+            LocalPlayer():ConCommand( 'say '.. JRS.CFG.PromoCommand .. " " .. line:GetColumnText(3) )
+        end)
+        rMenu:AddOption("Fast Demote", function()
+            LocalPlayer():ConCommand( 'say '.. JRS.CFG.DemoCommand .. " " .. line:GetColumnText(3) )
+            print('say '.. JRS.CFG.DemoCommand .. " " .. line:GetColumnText(3))
+        end)
+        rMenu:Open()
     end
     
     local PlayerSearch = vgui.Create("DTextEntry", Frame)

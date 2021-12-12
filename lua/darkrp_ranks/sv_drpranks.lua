@@ -168,8 +168,10 @@ util.AddNetworkString("OpenJRSMenu")
 hook.Add("PlayerSay", "JRS_ChatCommands", function(ply, text)
 
     if string.StartWith( string.lower(text), JRS.CFG.OpenMenuCommand) then
-        net.Start("OpenJRSMenu")
-        net.Send(ply)
+        if ply:GetRankVar("CanPromote") or CAMI.PlayerHasAccess(ply, "Promote_Any") then
+            net.Start("OpenJRSMenu")
+            net.Send(ply)
+        end
         return ""
     end
 
@@ -187,7 +189,7 @@ hook.Add("PlayerSay", "JRS_ChatCommands", function(ply, text)
 
         local plrank, promotee, PromoOrDemoStr, TextNoNum
         local TextNoCmd = string.sub(text, #txt[1] +2) 
-        if tonumber(txt[#txt]) then
+        if tonumber(txt[#txt]) && #txt > 2 then
             TextNoNum = string.sub(TextNoCmd, 1, #TextNoCmd - #txt[#txt] - 1 )
             plrank = tonumber(txt[#txt])
 
@@ -211,7 +213,7 @@ hook.Add("PlayerSay", "JRS_ChatCommands", function(ply, text)
 
             promotee = IsPlyNick( TextNoNum ) 
             
-            if tonumber(txt[#txt]) then
+            if tonumber(txt[#txt]) && #txt > 2 then
                 if ply:PromoDemoPlayer(promotee, plrank, true) then
                     JRS.LegacyNotifyPlayer("BROADCAST", ply:Nick() .. " " .. PromoOrDemoStr .. promotee:Nick() .. " to " .. ply:GetRankName(), NOTIFY_GENERIC , 3)
                     return ""
@@ -228,6 +230,7 @@ hook.Add("PlayerSay", "JRS_ChatCommands", function(ply, text)
             JRS.LegacyNotifyPlayer(ply, "Command Usage : " .. txt[1] .. " " .. "< PlayerName / SteamID / SteamID64> <number RankID>(optional)>", NOTIFY_ERROR , 3)
             return ""
         end
+        return ""
     end
 end )
 

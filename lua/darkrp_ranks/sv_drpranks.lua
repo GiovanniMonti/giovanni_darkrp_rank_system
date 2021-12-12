@@ -19,12 +19,6 @@ hook.Add("PlayerInitialSpawn", "jrs_InitPlyDb", function(ply)
     
 end)
 
-hook.Add("PlayerSpawn", "jrs_managespawn", function(ply)
-    JRS.DrpRanksPlayerData[ply:SteamID64()][ply:Team()] = JRS.DrpRanksPlayerData[ply:SteamID64()][ply:Team()] or {}
-    
-    ply:JRS_ManageSpawn()
-
-end)
 
 function JRS:SaveEntireDB()
    for k,v in pairs(self.DrpRanksPlayerData) do
@@ -260,3 +254,10 @@ function meta:RanksPlayerModels()
     end
 
 end
+
+hook.Add("PlayerSpawn", "jrs_managespawn", function(ply)
+    JRS.DrpRanksPlayerData[ply:SteamID64()][ply:Team()] = JRS.DrpRanksPlayerData[ply:SteamID64()][ply:Team()] or {}
+    
+    ply:JRS_ManageSpawn()
+
+end)

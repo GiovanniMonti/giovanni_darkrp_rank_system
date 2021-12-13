@@ -74,16 +74,23 @@ function meta:SetRank(RankID)
 
 end
 -- Num is optional, defaults to 1
-function meta:RankPromote(num)
+function meta:RankPromote(num, cteam)
+    local sPlyTeam
+    if cteam then 
+        sPlyTeam = cteam
+    else 
+        sPlyTeam = self:Team()
+    end
+
     if num == self:GetRank() then return end
     
-    if num and JRS.JobRankTables[self:Team()] then
+    if num and JRS.JobRankTables[sPlyTeam] then
         self:SetRank( num )
         self:RanksLoadout()
         
         JRS.DrpRanksPlayerData[self:SteamID64()] = JRS.DrpRanksPlayerData[self:SteamID64()] or {}
-        JRS.DrpRanksPlayerData[self:SteamID64()][self:Team()] = JRS.DrpRanksPlayerData[self:SteamID64()][self:Team()] or {}
-        JRS.DrpRanksPlayerData[self:SteamID64()][self:Team()].Rank = num
+        JRS.DrpRanksPlayerData[self:SteamID64()][sPlyTeam] = JRS.DrpRanksPlayerData[self:SteamID64()][sPlyTeam] or {}
+        JRS.DrpRanksPlayerData[self:SteamID64()][sPlyTeam].Rank = num
         JRS:UpdatePlyDB( self:SteamID64())
     end
 
@@ -103,13 +110,24 @@ function meta:JRS_ManageSpawn()
 
 end
 
-function meta:PlayerCanPromote(sPly, rank)
+function meta:PlayerCanPromote(sPly, rank, cteam)
+
     local PlyRankTbl = self:GetJobRanksTable()
-    local sPlyRankTbl = sPly:GetJobRanksTable()
+    local sPlyRankTbl, sPlyTeam, sPlyRank
     
+    if cteam then
+        sPlyRankTbl = sPly:GetJobRanksTable(cteam)
+        sPlyTeam = cteam
+        sPlyRank = JRS.DrpRanksPlayerData[sPly:SteamID64()][sPly:Team()].Rank
+    else
+        sPlyRankTbl = sPly:GetJobRanksTable(cteam)
+        sPlyTeam = sPly:Team()
+        sPlyRank = sPly:GetRank()
+    end
+
     if !sPly:GetJobRanksTable() then return false end
     
-    if ( rank >= sPly:GetJobRanksTable().MaxRank and rank >= sPly:GetJobRanksTable().MaxPromoRank[self:GetRank()]  ) then 
+    if ( rank >= sPlyRankTbl.MaxRank and rank >= self:GetJobRanksTable().MaxPromoRank[self:GetRank()]  ) then 
         JRS.LegacyNotifyPlayer(self, "The maximum rank on this job has been reached. (or you're trying to promote over the max)", NOTIFY_ERROR , 4)
         return false
     end 
@@ -123,9 +141,9 @@ function meta:PlayerCanPromote(sPly, rank)
         return true
     end
 
-    if self:GetRank() > sPly:GetRank() and rank < self:GetRank() and rank < sPly:GetJobRanksTable().MaxPromoRank[self:GetRank()]  then
+    if self:GetRank() > sPlyRank and rank < self:GetRank() and rank < sPlyRankTbl.MaxPromoRank[self:GetRank()]  then
         for _, v in pairs( PlyRankTbl.OtherPromoPerms ) do
-            if JRS.JobRankTables[sPly:Team()] == v then return true end
+            if JRS.JobRankTables[sPlyTeam] == v then return true end
         end
     end
 
@@ -162,6 +180,60 @@ function meta:PromoDemoPlayer(sPly, rank, setrank)
     return PlyCanPromote
     
 end
+
+----------- for the clientside menu.
+
+function meta:PromoDemoTeam(sPly, rank, setrank, team)
+    local CurRank = JRS.DrpRanksPlayerData[self:SteamID64()][self:Team()].Rank
+    local newrank = 0
+
+    if setrank == false then
+
+        if ( rank == "promo" or rank == 1 ) then 
+            newrank = CurRank + 1
+        elseif ( rank == "demo" or rank == -1 ) then
+            newrank = CurRank -1
+        else 
+            newrank = CurRank + rank
+        end
+        
+    elseif setrank == true then
+        newrank = rank  
+    end
+ 
+
+    local PlyCanPromote = self:PlayerCanPromote(sPly, newrank,team)
+    
+    if PlyCanPromote then sPly:RankPromote(newrank) end
+
+    return PlyCanPromote
+    
+end
+
+util.AddNetworkString("PromoDemoTeam")
+
+net.Receive("PromoDemoTeam", function(len, pl)
+    local sid64,rank,rteam
+    sid64 = net.ReadString()
+    rank = net.ReadInt(8)
+    rteam = net.ReadUInt(8)
+
+    local setrank = true
+    if rank <0 then
+        setrank = false
+        if rank == -1 then 
+            rank = "promo"
+        elseif rank == -2 then 
+            rank = "demo"
+        end
+    end
+
+    pl:PromoDemoTeam( player.GetBySteamID64(sid64) , rank, setrank, rteam)
+
+end )
+
+-----------
+
 
 util.AddNetworkString("OpenJRSMenu")
 

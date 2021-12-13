@@ -7,7 +7,45 @@ net.Receive("LegacyNotifySv", function()
     surface.PlaySound( "buttons/button15.wav" )
 
 end)
+
 --------------------------------------------------
+
+surface.CreateFont( "JRS_MenuData",{
+
+    font = "Tahoma",
+	extended = false,
+	size = 16,
+	weight = 400,
+	antialias = true,
+	underline = false,
+	italic = false,
+	strikeout = false,
+	symbol = false,
+	rotary = false,
+	shadow = false,
+	outline = false,
+
+
+} )
+
+
+
+---------------------------------------------------
+
+local function TeamPromoDemo(sply, rank, steam)
+    net.Start("PromoDemoTeam")
+        net.WriteString( sply:SteamID64() ) 
+        if rank == "promo" then 
+            rank = -1 
+        elseif rank == "demo" then 
+            rank = -2 
+        end -- this sucks, a LOT.
+        net.WriteInt(rank, 8)
+        net.WriteUInt(steam, 8) -- less than 255 teams & 255 ranks each seems reasonable.
+    net.SendToServer()
+    
+end
+----------------------------------------------------
 
 net.Receive("OpenJRSMenu", function() JRS:OpenMenu() end)
 
@@ -21,7 +59,7 @@ function JRS:OpenMenu()
     local Frame = vgui.Create( "DFrame" )
     Frame:SetPos(ScrW()/2 -w/2,ScrH()/2 -h/2)
     Frame:SetSize( w , h ) 
-    Frame:SetTitle( "DarkRP Ranks System" ) 
+    Frame:SetTitle( "DarkRP Ranks System Menu" ) 
     Frame:SetVisible( true ) 
     Frame:SetDraggable( true ) 
 
@@ -35,7 +73,6 @@ function JRS:OpenMenu()
         draw.RoundedBox(8, 0, 0, wi, hi, FrameColor)
     end
 
-    
 
     local PlyList = vgui.Create("DListView", Frame)
 
@@ -50,6 +87,60 @@ function JRS:OpenMenu()
         
     for _,v in pairs( player.GetHumans() ) do
         PlyList:AddLine( v:Nick(), v:SteamID(), v:SteamID64() )
+    end
+
+    function PlyList:OnRowSelected(rowIndex, row)
+        local ply = player.GetBySteamID64( row:GetColumnText(3) )
+
+        local plytext = vgui.Create( "DLabel", Frame )
+        plytext:SetPos( w*0.04, h*0.65 )
+
+        local str = "Player : " .. ply:Nick() .. "\nCurrent Job : " .. team.GetName(ply:Team()) .. "\nCurrent Rank : " .. ply:GetRankName() .. " ( ID : ".. ply:GetRank() .. " )" 
+
+        plytext:SetFont("JRS_MenuData")
+        plytext:SetText( str )
+
+        plytext:SizeToContents()
+
+
+        local promotext = vgui.Create( "DLabel", Frame )
+        promotext:SetPos( w*0.60, h*0.65 )
+        promotext:SetText( "Job you are editing the rank of :" )
+        promotext:SizeToContents()
+
+        local joblist = vgui.Create("DComboBox", Frame)
+        joblist:SetPos( w*0.60, h*0.7 )
+        joblist:SetSize(w*0.34, h*0.04 )
+        joblist:SetValue("Select Job :")
+
+        for k,_ in pairs(JRS.JobRankTables) do
+            joblist:AddChoice(team.GetName(k), k)
+        end
+
+        local selectedTeam
+
+        function joblist:OnSelect(index, value, data)
+            selectedTeam = data
+        end
+
+        local PromoButton = vgui.Create("DButton", Frame)
+        PromoButton:SetText("Promote Job")
+        PromoButton:SetPos( w*0.60, h*0.75 )	
+        PromoButton:SetSize(w*0.17, h*0.04 )
+
+        function PromoButton.DoClick()
+	        TeamPromoDemo(ply,"promo",selectedTeam)
+        end
+
+        local DemoButton = vgui.Create("DButton", Frame)
+        DemoButton:SetText("Demote Job")
+        DemoButton:SetPos( w*0.774, h*0.75 )	
+        DemoButton:SetSize(w*0.17, h*0.04 )
+
+        function DemoButton.DoClick()
+	        TeamPromoDemo(ply,"demo",selectedTeam)
+        end
+
     end
     
     function PlyList:OnRowRightClick(lineID, line)

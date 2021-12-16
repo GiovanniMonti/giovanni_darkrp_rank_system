@@ -8,6 +8,27 @@ net.Receive("LegacyNotifySv", function()
 
 end)
 
+JRS.ClientTempRankDB = JRS.ClientTempRankDB or {}
+
+function JRS.RequestPlyRanks(ply)
+
+    net.Start("JRS_RqPlRnk")
+    net.WriteUInt(ply:AccountID(), 28)
+    net.SendToServer()
+
+end
+
+net.Receive("JRS_RetPlRnk", function()
+
+    local iLen = net.ReadUInt(8)
+    local pl = player.GetByAccountID( net.ReadUInt(28) )
+    JRS.ClientTempRankDB[ pl:SteamID64() ]  = JRS.ClientTempRankDB[ pl:SteamID64() ] or {}
+
+    for i = 1, iLen do
+        JRS.ClientTempRankDB[ pl:SteamID64() ][net.ReadUInt(8)] = net.ReadUInt(8)
+    end
+end)
+
 --------------------------------------------------
 
 surface.CreateFont( "JRS_MenuData",{
@@ -91,6 +112,7 @@ function JRS:OpenMenu()
 
     function PlyList:OnRowSelected(rowIndex, row)
         local ply = player.GetBySteamID64( row:GetColumnText(3) )
+        JRS.RequestPlyRanks()
 
         local plytext = vgui.Create( "DLabel", Frame )
         plytext:SetPos( w*0.04, h*0.65 )
@@ -105,7 +127,7 @@ function JRS:OpenMenu()
 
         local promotext = vgui.Create( "DLabel", Frame )
         promotext:SetPos( w*0.60, h*0.65 )
-        promotext:SetText( "Job you are editing the rank of :" )
+        promotext:SetText( "Selected Job :" )
         promotext:SizeToContents()
 
         local joblist = vgui.Create("DComboBox", Frame)

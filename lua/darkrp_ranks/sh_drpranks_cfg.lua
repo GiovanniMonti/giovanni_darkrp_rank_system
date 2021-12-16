@@ -16,6 +16,8 @@ JRS.CFG.AddRankToJobName = true
 --[[
     Config Usage & formatting.
 
+    NOTICE : Up to 255 ranks & 255 jobs with ranks.
+
     Create a ranks table    
         CreateRanksTable( RankTableID, MaxRank, PrefixSeparator, PromoTableID
 

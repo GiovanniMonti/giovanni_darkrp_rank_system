@@ -19,7 +19,6 @@ hook.Add("PlayerInitialSpawn", "jrs_InitPlyDb", function(ply)
     
 end)
 
-
 function JRS:SaveEntireDB()
    for k,v in pairs(self.DrpRanksPlayerData) do
         file.Write( "drpranksdata/" .. k .. ".txt", util.TableToJSON( self.DrpRanksPlayerData[k] ) )
@@ -30,6 +29,37 @@ end
 function JRS:UpdatePlyDB(steamID)
     file.Write( "drpranksdata/" .. steamID .. ".txt", util.TableToJSON( self.DrpRanksPlayerData[steamID] ) )
 end
+
+------
+util.AddNetworkString("JRS_RqPlRnk") -- request from cl
+util.AddNetworkString("JRS_RetPlRnk") -- response from sv
+
+function JRS:TransmitPlyRankTbl(ply,reciever)
+
+    local tbl = self.DrpRanksPlayerData[ply:SteamID64()]
+
+    net.Start("JRS_RetPlRnk")
+    local iLen = #tbl 
+    net.WriteUInt(iLen, 8)
+    net.WriteUInt( ply:AccountID() , 28)
+
+    for job, _ in pairs(tbl) do
+        net.WriteUInt(job, 8)
+        net.WriteUInt(tbl[job]["Rank"], 8)
+    end
+
+    net.Send(reciever)
+
+end
+
+net.Receive("JRS_RqPlRnk", function(len, pl) 
+
+    local ply = player.GetByAccountID( net.ReadUInt(28) )
+
+    JRS:TransmitPlyRankTbl(ply,pl)
+end)
+
+--------
 
 util.AddNetworkString( "LegacyNotifySv" )
 

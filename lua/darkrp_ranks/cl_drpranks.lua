@@ -112,7 +112,7 @@ function JRS:OpenMenu()
 
     function PlyList:OnRowSelected(rowIndex, row)
         local ply = player.GetBySteamID64( row:GetColumnText(3) )
-        JRS.RequestPlyRanks()
+        JRS.RequestPlyRanks(ply)
 
         local plytext = vgui.Create( "DLabel", Frame )
         plytext:SetPos( w*0.04, h*0.65 )
@@ -127,7 +127,7 @@ function JRS:OpenMenu()
 
         local promotext = vgui.Create( "DLabel", Frame )
         promotext:SetPos( w*0.60, h*0.65 )
-        promotext:SetText( "Selected Job :" )
+        promotext:SetText( "Change rank on other Jobs" )
         promotext:SizeToContents()
 
         local joblist = vgui.Create("DComboBox", Frame)
@@ -145,9 +145,24 @@ function JRS:OpenMenu()
             selectedTeam = data
         end
 
+        local selectedJobInfo = vgui.Create( "DLabel", Frame )
+        selectedJobInfo:SetPos( w*0.60, h*0.70 )
+        selectedJobInfo:SetText( "Change rank on other Jobs" )
+        selectedJobInfo:SizeToContents()
+
+        local selectedJobRank = vgui.Create("DComboBox", Frame)
+        selectedJobRank:SetPos( w*0.60, h*0.75 )
+        selectedJobRank:SetSize(w*0.34, h*0.04 )
+        
+        for _,v in pairs(JRS.ClientTempRankDB[ply:SteamID64()]) do
+            joblist:AddChoice() -- here
+        end
+
+        local hbuttons = h*0.85
+
         local PromoButton = vgui.Create("DButton", Frame)
         PromoButton:SetText("Promote Job")
-        PromoButton:SetPos( w*0.60, h*0.75 )	
+        PromoButton:SetPos( w*0.60, hbuttons )	
         PromoButton:SetSize(w*0.17, h*0.04 )
 
         function PromoButton.DoClick()
@@ -156,7 +171,7 @@ function JRS:OpenMenu()
 
         local DemoButton = vgui.Create("DButton", Frame)
         DemoButton:SetText("Demote Job")
-        DemoButton:SetPos( w*0.774, h*0.75 )	
+        DemoButton:SetPos( w*0.774, hbuttons )	
         DemoButton:SetSize(w*0.17, h*0.04 )
 
         function DemoButton.DoClick()

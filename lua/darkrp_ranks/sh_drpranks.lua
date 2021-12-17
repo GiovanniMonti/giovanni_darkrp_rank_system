@@ -75,14 +75,11 @@ function meta:GetRank()
 end
 
 function meta:GetJobRanksTable(cteam)
-    if cteam then
+    cteam = cteam or self:Team()
 
-        local loc = JRS.JobRankTables[cteam]
-        return JRS.JobRanks[loc]
-    else
-        local loc = JRS.JobRankTables[self:Team()]
-        return JRS.JobRanks[loc]
-    end
+    local loc = JRS.JobRankTables[cteam]
+    return JRS.JobRanks[loc]
+    
 end
 
 function meta:GetRankName()

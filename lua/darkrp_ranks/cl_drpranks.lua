@@ -133,16 +133,17 @@ function JRS:OpenMenu()
         local joblist = vgui.Create("DComboBox", Frame)
         joblist:SetPos( w*0.60, h*0.7 )
         joblist:SetSize(w*0.34, h*0.04 )
-        joblist:SetValue("Select Job :")
-
-        for k,_ in pairs(JRS.JobRankTables) do
-            joblist:AddChoice(team.GetName(k), k)
-        end
+        
 
         local selectedTeam
 
-        function joblist:OnSelect(index, value, data)
-            selectedTeam = data
+        for k,_ in pairs(JRS.JobRankTables) do
+            local default = false
+            if k == ply:Team() then
+                default = true
+                selectedTeam = k
+            end
+            joblist:AddChoice(team.GetName(k), k,default)    
         end
 
         local selectedJobInfo = vgui.Create( "DLabel", Frame )
@@ -154,8 +155,30 @@ function JRS:OpenMenu()
         selectedJobRank:SetPos( w*0.60, h*0.75 )
         selectedJobRank:SetSize(w*0.34, h*0.04 )
         
-        for _,v in pairs(JRS.ClientTempRankDB[ply:SteamID64()]) do
-            joblist:AddChoice() -- here
+        local teamJobsRanksTable = ply:GetJobRanksTable(selectedTeam)
+         
+        for k,v in pairs( teamJobsRanksTable.RankName ) do
+            local default = false
+            if k == JRS.ClientTempRankDB[ply:SteamID64()][selectedTeam] then 
+                default = true
+            end
+
+            selectedJobRank:AddChoice(v,k,default)
+        end
+
+        function joblist:OnSelect(index, value, data)
+            selectedTeam = data
+            teamJobsRanksTable = ply:GetJobRanksTable(selectedTeam)
+            selectedJobRank:Clear()
+            for k,v in pairs( teamJobsRanksTable.RankName ) do
+                local default = false
+                if k == JRS.ClientTempRankDB[ply:SteamID64()][data] then 
+                    default = true
+                end
+    
+                selectedJobRank:AddChoice(v,k,default)
+    
+            end
         end
 
         local hbuttons = h*0.85

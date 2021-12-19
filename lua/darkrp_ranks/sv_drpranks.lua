@@ -338,7 +338,7 @@ end )
 
 
 function meta:RanksLoadout()
-    
+    print(self:GetRank())
     local loadout = self:GetJobRanksTable().Loadout[self:GetRank()]
     
     if loadout then

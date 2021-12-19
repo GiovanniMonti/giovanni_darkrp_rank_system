@@ -19,7 +19,7 @@ JRS.CFG.AddRankToJobName = true
     NOTICE : Up to 255 ranks & 255 jobs with ranks.
 
     Create a ranks table    
-        CreateRanksTable( RankTableID, MaxRank, PrefixSeparator, PromoTableID
+        CreateRanksTable( RankTableID, MaxRank, PrefixSeparator, PromoTableID )
 
         RankTableID : the number ID of the table. (integer)
         MaxRank : the highest rank you want to create in the table (integer)
@@ -44,6 +44,7 @@ local function JRS_InitRanks()
 timer.Simple(3, function()
 
     -- rank tables in here.
+    print(1)
 
     CreateRanksTable(1, 4 , ".", {2} )
     CreateRank( 0, "Rank 1", "JOB-RNK-1", {"weapon_pistol"}, false, nil )

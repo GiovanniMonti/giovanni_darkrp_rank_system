@@ -37,7 +37,13 @@ function CreateRank( RankID, RankName, Prefix, Loadout, CanPromote, MaxPromoRank
         JRS.JobRanks[lastID].CanPromote[RankID] = CanPromote or false
         JRS.JobRanks[lastID].MaxPromoRank[RankID] = MaxPromoRank or  JRS.JobRanks[lastID].MaxRank -- if CanPromote false then this is useless, if this is nil, it will be the highest rank
         JRS.JobRanks[lastID].Models[RankID] = Models or false 
-    
+        
+        if Models then
+            for _,v in pairs( Models ) do
+                util.PrecacheModel(v)  
+            end
+        end
+
     end
 end
 

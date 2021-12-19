@@ -41,10 +41,9 @@ JRS.CFG.AddRankToJobName = true
 ]]
 
 local function JRS_InitRanks() 
-timer.Simple(3, function()
+timer.Simple(0, function()
 
     -- rank tables in here.
-    print(1)
 
     CreateRanksTable(1, 4 , ".", {2} )
     CreateRank( 0, "Rank 1", "JOB-RNK-1", {"weapon_pistol"}, false, nil )
@@ -56,7 +55,6 @@ timer.Simple(3, function()
     CreateRanksTable(2, 2 , ".", nil )
     CreateRank( 0, "Rank 1", "JOB-RNK-1", {"weapon_pistol","weapon_smg1"}, false, nil, nil )
     CreateRank( 1, "Rank 2", "JOB-RNK-2", {"weapon_pistol","weapon_smg1"}, false, nil, nil )
-
     GiveJobRankTable(2, TEAM_POLICE )
 
 

@@ -105,22 +105,18 @@ function meta:SetRank(RankID)
 end
 -- Num is optional, defaults to 1
 function meta:RankPromote(num, cteam)
-    local sPlyTeam
-    if cteam then 
-        sPlyTeam = cteam
-    else 
-        sPlyTeam = self:Team()
-    end
-
+ 
+    cteam = cteam or self:Team()
+    
     if num == self:GetRank() then return end
     
-    if num and JRS.JobRankTables[sPlyTeam] then
+    if num and JRS.JobRankTables[cteam] then
         self:SetRank( num )
         self:RanksLoadout()
         
         JRS.DrpRanksPlayerData[self:SteamID64()] = JRS.DrpRanksPlayerData[self:SteamID64()] or {}
-        JRS.DrpRanksPlayerData[self:SteamID64()][sPlyTeam] = JRS.DrpRanksPlayerData[self:SteamID64()][sPlyTeam] or {}
-        JRS.DrpRanksPlayerData[self:SteamID64()][sPlyTeam].Rank = num
+        JRS.DrpRanksPlayerData[self:SteamID64()][cteam] = JRS.DrpRanksPlayerData[self:SteamID64()][cteam] or {}
+        JRS.DrpRanksPlayerData[self:SteamID64()][cteam].Rank = num
         JRS:UpdatePlyDB( self:SteamID64())
     end
 
@@ -234,7 +230,7 @@ function meta:PromoDemoTeam(sPly, rank, setrank, team)
 
     local PlyCanPromote = self:PlayerCanPromote(sPly, newrank,team)
     
-    if PlyCanPromote then sPly:RankPromote(newrank) end
+    if PlyCanPromote then sPly:RankPromote(newrank,team) end
 
     return PlyCanPromote
     

@@ -33,11 +33,11 @@ end
 ------
 util.AddNetworkString("JRS_RqPlRnk") -- request from cl
 util.AddNetworkString("JRS_RetPlRnk") -- response from sv
-local rnktbl_cooldown
+local RankTblCooldown
 function JRS:TransmitPlyRankTbl(ply,reciever)
-    rnktbl_cooldown = rnktbl_cooldown or CurTime()
+    RankTblCooldown = RankTblCooldown or CurTime()
 
-    if CurTime() - rnktbl_cooldown < 1 then return end
+    if CurTime() - RankTblCooldown < 1 then return end
 
     local tbl = self.DrpRanksPlayerData[ply:SteamID64()]
 
@@ -65,6 +65,8 @@ end)
 --------
 
 util.AddNetworkString( "LegacyNotifySv" )
+
+-- same as the client-only gmod ones.
 
 local NOTIFY_GENERIC = 0
 local NOTIFY_ERROR = 1
@@ -349,7 +351,7 @@ end )
 
 
 function meta:RanksLoadout()
-    print(self:GetRank())
+    
     local loadout = self:GetJobRanksTable().Loadout[self:GetRank()]
     
     if loadout then

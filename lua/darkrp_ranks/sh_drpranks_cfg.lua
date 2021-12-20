@@ -38,6 +38,18 @@ JRS.CFG.AddRankToJobName = true
         CanPromote : If a rank can promote ranks lower than itself or not. (boolean - true or false )
         MaxPromoRank : The highest rank this rank can promote. only if CanPromote = true. (integer)
         PlayerModels : A Table of the names of the playermodels you want to use, will choose randomly in the table. (Table of string - if nil does nothing)
+
+    Set a job for a rankstable (you can use the same on multiple jobs.)
+        GiveJobRankTable( RankTableID , TEAM_NAME )
+
+        RankTableID : the number ID of the table. (integer)
+        TEAM_NAME : The Darkrp job/team ID (integer / var)
+
+    Disable the prefix on a specific job
+        DisablePrefix(TEAM_NAME)
+
+        TEAM_NAME : The Darkrp job/team ID (integer / var)
+
 ]]
 
 local function JRS_InitRanks() 
@@ -47,18 +59,19 @@ timer.Simple(0, function()
     -- here is a example of the syntax, feel free to remove or comment out.
     CreateRanksTable(1, 4 , ".", {2} )
         CreateRank( 0, "Rank 1", "JOB-RNK-1", {"weapon_pistol"}, false, nil )
-        CreateRank( 1, "Rank 2", "JOB-RNK-2", {"weapon_pistol","weapon_smg1"}, false, nil, nil )
-        CreateRank( 2, "Rank 3", "JOB-RNK-3", {"weapon_pistol","weapon_smg1"}, true, 2, nil )
-        CreateRank( 3, "Rank 4", "JOB-RNK-4", {"weapon_pistol","weapon_smg1"}, true, nil, nil )
+        CreateRank( 1, "Rank 2", "JOB-RNK-2", {"weapon_pistol","weapon_smg1"}, false, 0, nil )
+        CreateRank( 2, "Rank 3", "JOB-RNK-3", {"weapon_pistol","weapon_smg1"}, true, 2, {"models/player/combine_super_soldier.mdl"} )
+        CreateRank( 3, "Rank 4", "JOB-RNK-4", {"weapon_pistol","weapon_smg1"}, true, 2, nil )
 
     GiveJobRankTable(1 , TEAM_CITIZEN )
 
     CreateRanksTable(2, 2 , ".", nil )
-        CreateRank( 0, "Rank 1", "JOB-RNK-1", {"weapon_pistol","weapon_smg1"}, false, nil, nil )
+        CreateRank( 0, "Rank 1", "JOB-RNK-1", {"weapon_pistol","weapon_smg1"}, false, nil, {"models/player/combine_super_soldier.mdl", "models/player/swat.mdl"} )
         CreateRank( 1, "Rank 2", "JOB-RNK-2", {"weapon_pistol","weapon_smg1"}, false, nil, nil )
 
     GiveJobRankTable(2, TEAM_POLICE )
 
+    DisablePrefix(TEAM_POLICE)
 
     -- Editing anything below here will result in errors if you dont know what you're doing.
 end)

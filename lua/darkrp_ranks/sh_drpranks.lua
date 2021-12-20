@@ -47,6 +47,21 @@ function CreateRank( RankID, RankName, Prefix, Loadout, CanPromote, MaxPromoRank
     end
 end
 
+function GiveJobRankTable(JobRankTableID, JobID)
+    if JobRankTableID and JobID then
+        JRS.JobRankTables[JobID] = JobRankTableID
+    end
+end
+
+function DisablePrefix(job)
+    local tblID = JRS.JobRankTables[job]
+
+    for i= 0,#JRS.JobRanks[tblID].Prefix do
+        JRS.JobRanks[tblID].Prefix[i] = ""
+    end
+end
+    
+
 hook.Add("loadCustomDarkRPItems", "drpranks_initshared_postdarkrp", function()
 
     meta.SteamName = meta.SteamName or meta.Name
@@ -69,12 +84,6 @@ hook.Add("loadCustomDarkRPItems", "drpranks_initshared_postdarkrp", function()
     meta.GetName = meta.Name
     meta.Nick = meta.Name
 end)
-
-function GiveJobRankTable(JobRankTableID, JobID)
-    if JobRankTableID and JobID then
-        JRS.JobRankTables[JobID] = JobRankTableID
-    end
-end
 
 function meta:GetRank()
     return self:GetNWInt("JobRank")

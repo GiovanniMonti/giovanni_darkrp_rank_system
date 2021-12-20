@@ -8,10 +8,9 @@ JRS.CFG.DemoCommand = JRS.CFG.Prefix .. "gdemote"
 -- chat command used to demote
 
 JRS.CFG.OpenMenuCommand = JRS.CFG.Prefix .. "gmenu"
-
+-- 
 JRS.CFG.AddRankToJobName = true
--- does this : jobname (rankname)
-
+-- Change name of the darkrp jobs to the template : jobname (rankname)
 
 --[[
     Config Usage & formatting.
@@ -30,7 +29,7 @@ JRS.CFG.AddRankToJobName = true
         CreateRanksTable(1, 4 , ".", {2} )
 
     Create a rank for the rankstable last ranktable created.
-        CreateRank( RankID, RankName, Prefix, Loadout, CanPromote, MaxPromoRank )
+        CreateRank( RankID, RankName, Prefix, Loadout, CanPromote, MaxPromoRank,PlayerModels )
 
         RankID : the number ID of the rank you are creating, start from 0 and go up. (Integer)
         RankName : The name of the rank you are creating. (String)
@@ -38,27 +37,30 @@ JRS.CFG.AddRankToJobName = true
         Loadout : Table of the names of weapons to give players at spawn (Table of Strings)
         CanPromote : If a rank can promote ranks lower than itself or not. (boolean - true or false )
         MaxPromoRank : The highest rank this rank can promote. only if CanPromote = true. (integer)
+        PlayerModels : A Table of the names of the playermodels you want to use, will choose randomly in the table. (Table of string - if nil does nothing)
 ]]
 
 local function JRS_InitRanks() 
 timer.Simple(0, function()
 
-    -- rank tables in here.
-
+    -- You can setup rank tables below here.
+    -- here is a example of the syntax, feel free to remove or comment out.
     CreateRanksTable(1, 4 , ".", {2} )
-    CreateRank( 0, "Rank 1", "JOB-RNK-1", {"weapon_pistol"}, false, nil )
-    CreateRank( 1, "Rank 2", "JOB-RNK-2", {"weapon_pistol","weapon_smg1"}, false, nil, nil )
-    CreateRank( 2, "Rank 3", "JOB-RNK-3", {"weapon_pistol","weapon_smg1"}, true, 2, nil )
-    CreateRank( 3, "Rank 4", "JOB-RNK-4", {"weapon_pistol","weapon_smg1"}, true, nil, nil )
+        CreateRank( 0, "Rank 1", "JOB-RNK-1", {"weapon_pistol"}, false, nil )
+        CreateRank( 1, "Rank 2", "JOB-RNK-2", {"weapon_pistol","weapon_smg1"}, false, nil, nil )
+        CreateRank( 2, "Rank 3", "JOB-RNK-3", {"weapon_pistol","weapon_smg1"}, true, 2, nil )
+        CreateRank( 3, "Rank 4", "JOB-RNK-4", {"weapon_pistol","weapon_smg1"}, true, nil, nil )
+
     GiveJobRankTable(1 , TEAM_CITIZEN )
 
     CreateRanksTable(2, 2 , ".", nil )
-    CreateRank( 0, "Rank 1", "JOB-RNK-1", {"weapon_pistol","weapon_smg1"}, false, nil, nil )
-    CreateRank( 1, "Rank 2", "JOB-RNK-2", {"weapon_pistol","weapon_smg1"}, false, nil, nil )
+        CreateRank( 0, "Rank 1", "JOB-RNK-1", {"weapon_pistol","weapon_smg1"}, false, nil, nil )
+        CreateRank( 1, "Rank 2", "JOB-RNK-2", {"weapon_pistol","weapon_smg1"}, false, nil, nil )
+
     GiveJobRankTable(2, TEAM_POLICE )
 
 
-    -- Editing anything below here will result in errors.
+    -- Editing anything below here will result in errors if you dont know what you're doing.
 end)
 end
 

@@ -1,5 +1,5 @@
 JRS.DrpRanksPlayerData = JRS.DrpRanksPlayerData or {}
-
+-- data saving - json file
 hook.Add("Initialize", "jrs_DBCreate", function()
     if file.Exists("drpranksdata/", "DATA") then
         local f, _ = file.Find("drpranksdata/*.txt", "DATA")
@@ -66,7 +66,7 @@ end)
 
 util.AddNetworkString( "LegacyNotifySv" )
 
--- same as the client-only gmod ones.
+-- same as the client-only vanilla gmod ones.
 
 local NOTIFY_GENERIC = 0
 local NOTIFY_ERROR = 1
@@ -108,7 +108,7 @@ function meta:SetRank(RankID)
     end
 
 end
--- Num is optional, defaults to 1
+-- cteam optional
 function meta:RankPromote(num, cteam)
  
     cteam = cteam or self:Team()
@@ -164,7 +164,7 @@ function meta:PlayerCanPromote(sPly, rank, cteam)
     end 
 
     if ( rank < 0 ) then 
-        JRS.LegacyNotifyPlayer(self, "The minimum rank on this job has been reached.(why are you using a negative number??)", NOTIFY_ERROR , 4)
+        JRS.LegacyNotifyPlayer(self, "The minimum rank on this job has been reached.", NOTIFY_ERROR , 4)
         return false
     end
 

@@ -33,8 +33,11 @@ end
 ------
 util.AddNetworkString("JRS_RqPlRnk") -- request from cl
 util.AddNetworkString("JRS_RetPlRnk") -- response from sv
-
+local rnktbl_cooldown
 function JRS:TransmitPlyRankTbl(ply,reciever)
+    rnktbl_cooldown = rnktbl_cooldown or CurTime()
+
+    if CurTime() - rnktbl_cooldown < 1 then return end
 
     local tbl = self.DrpRanksPlayerData[ply:SteamID64()]
 

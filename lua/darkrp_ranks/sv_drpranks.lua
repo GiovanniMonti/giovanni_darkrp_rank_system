@@ -210,27 +210,38 @@ end
 ----------- for the clientside menu.
 
 function meta:PromoDemoTeam(sPly, rank, setrank, team)
-    local CurRank = JRS.DrpRanksPlayerData[self:SteamID64()][self:Team()].Rank
+    local CurRank = JRS.DrpRanksPlayerData[self:SteamID64()][team].Rank
     local newrank = 0
+    local PromoOrDemoStr
+
+    if rank == CurRank then return end
 
     if setrank == false then
 
         if ( rank == "promo" or rank == 1 ) then 
             newrank = CurRank + 1
+            PromoOrDemoStr = "promoted"
         elseif ( rank == "demo" or rank == -1 ) then
             newrank = CurRank -1
+            PromoOrDemoStr = "demoted"
         else 
             newrank = CurRank + rank
         end
         
     elseif setrank == true then
         newrank = rank  
+        if newrank > CurRank then
+            PromoOrDemoStr = "promoted"
+        else
+            PromoOrDemoStr = "demoted"
+        end
     end
  
 
     local PlyCanPromote = self:PlayerCanPromote(sPly, newrank,team)
     
     if PlyCanPromote then sPly:RankPromote(newrank,team) end
+    JRS.LegacyNotifyPlayer("BROADCAST", self:Nick() .. " " .. PromoOrDemoStr .. " ".. sPly:Nick() .. " to " .. JRS.JobRanks[team].RankName[newrank] , NOTIFY_GENERIC , 3)
 
     return PlyCanPromote
     
@@ -255,6 +266,7 @@ net.Receive("PromoDemoTeam", function(len, pl)
     end
 
     pl:PromoDemoTeam( player.GetBySteamID64(sid64) , rank, setrank, rteam)
+    
 
 end )
 

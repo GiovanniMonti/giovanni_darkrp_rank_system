@@ -66,8 +66,8 @@ timer.Simple(0, function()
     GiveJobRankTable(1 , TEAM_CITIZEN )
 
     CreateRanksTable(2, 2 , ".", nil )
-        CreateRank( 0, "Rank 1", "JOB-RNK-1", {"weapon_pistol","weapon_smg1"}, false, nil, {"models/player/combine_super_soldier.mdl", "models/player/swat.mdl"} )
-        CreateRank( 1, "Rank 2", "JOB-RNK-2", {"weapon_pistol","weapon_smg1"}, false, nil, nil )
+        CreateRank( 0, "Rank 1", "JOB-RNK-1", {"weapon_pistol","weapon_smg1"}, false, nil, {"models/player/swat.mdl"} )
+        CreateRank( 1, "Rank 2", "JOB-RNK-2", {"weapon_pistol","weapon_smg1"}, false, nil, {"models/player/combine_super_soldier.mdl", "models/player/swat.mdl"} )
 
     GiveJobRankTable(2, TEAM_POLICE )
 

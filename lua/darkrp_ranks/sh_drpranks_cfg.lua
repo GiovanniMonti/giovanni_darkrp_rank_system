@@ -77,4 +77,4 @@ timer.Simple(0, function()
 end)
 end
 
-hook.Add("loadCustomDarkRPItems", "JRS_InitConfigRanks", JRS_InitRanks() )
+hook.Add("loadCustomDarkRPItems", "JRS_InitConfigRanks", JRS_InitRanks )

@@ -351,11 +351,10 @@ end )
 
 
 function meta:RanksLoadout()
+    local tbl =  self:GetJobRanksTable()
     
-    local loadout = self:GetJobRanksTable().Loadout[self:GetRank()]
-    
-    if loadout then
-        for _, v in pairs( loadout ) do
+    if tbl then
+        for _, v in pairs( tbl.Loadout[self:GetRank()] ) do
             self:Give(v)
             
         end

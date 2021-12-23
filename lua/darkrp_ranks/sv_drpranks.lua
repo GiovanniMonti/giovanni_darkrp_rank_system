@@ -364,10 +364,10 @@ end
 
 function meta:RanksPlayerModels()
 
-    local PlyModels = self:GetJobRanksTable().Models[self:GetRank()]
+    local tbl = self:GetJobRanksTable()
 
-    if PlyModels then
-        self:SetModel( PlyModels[math.random(#PlyModels)] )
+    if tbl then
+        self:SetModel( tbl.Models[self:GetRank()][math.random(#PlyModels)] )
     end
 
 end

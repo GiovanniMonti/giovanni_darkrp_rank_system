@@ -3,16 +3,15 @@ local meta = FindMetaTable("Player")
 JRS.JobRanks = JRS.JobRanks or {}
 JRS.JobRankTables = JRS.JobRankTables or {}
 
-local LastID = nil
+local CurID = nil
 
 function CreateRanksTable( JobRankTableID, MaxRank , PrefixSeperator, OtherPromoPerms )
+    CurID = JobRankTableID
 
     JRS.JobRanks[JobRankTableID] = {}
     JRS.JobRanks[JobRankTableID].MaxRank = MaxRank
     JRS.JobRanks[JobRankTableID].PrefixSeperator = PrefixSeperator
     JRS.JobRanks[JobRankTableID].OtherPromoPerms = OtherPromoPerms
-
-    -- pre- initializing things for the ranks below here.
 
     JRS.JobRanks[JobRankTableID].RankName = {}
     JRS.JobRanks[JobRankTableID].Prefix = {}
@@ -21,22 +20,19 @@ function CreateRanksTable( JobRankTableID, MaxRank , PrefixSeperator, OtherPromo
     JRS.JobRanks[JobRankTableID].MaxPromoRank = {}
     JRS.JobRanks[JobRankTableID].Models = {}
 
-
-
-    lastID = JobRankTableID
-
 end
 
 function CreateRank( RankID, RankName, Prefix, Loadout, CanPromote, MaxPromoRank, Models )
 
-    if JRS.JobRanks[lastID] then 
+    if JRS.JobRanks[CurID] then 
 
-        JRS.JobRanks[lastID].RankName[RankID] = RankName
-        JRS.JobRanks[lastID].Prefix[RankID] = Prefix
-        JRS.JobRanks[lastID].Loadout[RankID] = Loadout or {}
-        JRS.JobRanks[lastID].CanPromote[RankID] = CanPromote or false
-        JRS.JobRanks[lastID].MaxPromoRank[RankID] = MaxPromoRank or  JRS.JobRanks[lastID].MaxRank -- if CanPromote false then this is useless, if this is nil, it will be the highest rank
-        JRS.JobRanks[lastID].Models[RankID] = Models or false 
+        JRS.JobRanks[CurID].RankName[RankID] = RankName
+        JRS.JobRanks[CurID].Prefix[RankID] = Prefix
+        JRS.JobRanks[CurID].Loadout[RankID] = Loadout or {}
+        JRS.JobRanks[CurID].Models[RankID] = Models or false 
+        JRS.JobRanks[CurID].CanPromote[RankID] = CanPromote or false
+        JRS.JobRanks[CurID].MaxPromoRank[RankID] = MaxPromoRank or  JRS.JobRanks[CurID].MaxRank -- if CanPromote false then this is useless, if this is nil, it will be the highest rank
+        
         
         if Models then
             for _,v in pairs( Models ) do

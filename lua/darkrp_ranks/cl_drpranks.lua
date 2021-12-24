@@ -119,7 +119,14 @@ function JRS:OpenMenu()
             local plytext = vgui.Create( "DLabel", Frame )
             plytext:SetPos( w*0.04, h*0.65 )
 
-            local str = "Player : " .. ply:Nick() .. "\nCurrent Job : " .. team.GetName(ply:Team()) .. "\nCurrent Rank : " .. ply:GetRankName() .. " ( ID : ".. ply:GetRank() .. " )" 
+            local rankname = ply:GetRankName()
+            local rankid = ply:GetRank()
+
+            if !rankname then
+                rankname = "n/a"
+            end
+
+            local str = "Player : " .. ply:Nick() .. "\nCurrent Job : " .. team.GetName(ply:Team()) .. "\nCurrent Rank : " .. rankname .. " ( ID : ".. rankid .. " )" 
 
             plytext:SetFont("JRS_MenuData")
             plytext:SetText( str )
@@ -157,44 +164,46 @@ function JRS:OpenMenu()
             selectedJobRank:SetSize(w*0.34, h*0.04 )
             
             local teamJobsRanksTable = ply:GetJobRanksTable(selectedTeam)
-            
-            for k,v in pairs( teamJobsRanksTable.RankName ) do
-                local default = false
-                if k == JRS.ClientTempRankDB[ply:SteamID64()][selectedTeam] then 
-                    default = true
-                end
-
-                selectedJobRank:AddChoice(v,k,default)
-            end
-
-            function joblist:OnSelect(index, value, data)
-                selectedTeam = data
-                teamJobsRanksTable = ply:GetJobRanksTable(selectedTeam)
-                selectedJobRank:Clear()
+            if teamJobsRanksTable then
                 for k,v in pairs( teamJobsRanksTable.RankName ) do
                     local default = false
-                    if k == JRS.ClientTempRankDB[ply:SteamID64()][data] then 
+                    if k == JRS.ClientTempRankDB[ply:SteamID64()][selectedTeam] then 
                         default = true
                     end
-        
+
                     selectedJobRank:AddChoice(v,k,default)
-        
                 end
-            end
-            local selectedrank
-            function selectedJobRank:OnSelect(index, value, data)
-                selectedrank = data
-            end
+                
 
-            local hbuttons = h*0.85
+                function joblist:OnSelect(index, value, data)
+                    selectedTeam = data
+                    teamJobsRanksTable = ply:GetJobRanksTable(selectedTeam)
+                    selectedJobRank:Clear()
+                    for k,v in pairs( teamJobsRanksTable.RankName ) do
+                        local default = false
+                        if k == JRS.ClientTempRankDB[ply:SteamID64()][data] then 
+                            default = true
+                        end
+            
+                        selectedJobRank:AddChoice(v,k,default)
+            
+                    end
+                end
+                local selectedrank
+                function selectedJobRank:OnSelect(index, value, data)
+                    selectedrank = data
+                end
 
-            local ApplyRank = vgui.Create("DButton", Frame)
-            ApplyRank:SetText("Set to rank")
-            ApplyRank:SetPos( w*0.60, hbuttons - h*0.05 )	
-            ApplyRank:SetSize(w*0.17*2, h*0.04 )
+                local hbuttons = h*0.85
 
-            function ApplyRank.DoClick()
-                TeamPromoDemo(ply,selectedrank,selectedTeam)
+                local ApplyRank = vgui.Create("DButton", Frame)
+                ApplyRank:SetText("Set to rank")
+                ApplyRank:SetPos( w*0.60, hbuttons - h*0.05 )	
+                ApplyRank:SetSize(w*0.17*2, h*0.04 )
+
+                function ApplyRank.DoClick()
+                    TeamPromoDemo(ply,selectedrank,selectedTeam)
+                end
             end
 
             --[[

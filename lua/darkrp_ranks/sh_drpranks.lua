@@ -86,26 +86,31 @@ hook.Add("loadCustomDarkRPItems", "drpranks_initshared_postdarkrp", function()
 end)
 
 function meta:GetRank()
-    return self:GetNWInt("JobRank")
+    return self:GetNWInt("JobRank",0)
 end
 
 function meta:GetJobRanksTable(cteam)
     cteam = cteam or self:Team()
 
     local loc = JRS.JobRankTables[cteam]
-    return JRS.JobRanks[loc] or false
+    if !loc then return false end
+
+    return JRS.JobRanks[loc]
     
 end
 
 function meta:GetRankName()
+    if !self:GetJobRanksTable() then return false end
     return self:GetJobRanksTable().RankName[self:GetRank()]
 end
 
 function meta:GetRankNamePrefix()
+    if !self:GetJobRanksTable() then return false end
     return self:GetJobRanksTable().Prefix[self:GetRank()]
 end
 
 function meta:GetRankVar(var)
+    if !self:GetJobRanksTable() then return false end
     return self:GetJobRanksTable()[var][self:GetRank()]
 end
 

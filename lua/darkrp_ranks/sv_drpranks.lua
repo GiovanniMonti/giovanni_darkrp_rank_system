@@ -367,7 +367,7 @@ function meta:RanksPlayerModels()
     local tbl = self:GetJobRanksTable()
 
     if tbl then
-        self:SetModel( tbl.Models[self:GetRank()][math.random(#PlyModels)] )
+        self:SetModel( tbl.Models[self:GetRank()][math.random( #tbl.Models[ self:GetRank() ] )] )
     end
 
 end

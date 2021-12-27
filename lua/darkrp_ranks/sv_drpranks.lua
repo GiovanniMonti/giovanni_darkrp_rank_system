@@ -353,7 +353,7 @@ end )
 function meta:RanksLoadout()
     local tbl =  self:GetJobRanksTable()
     
-    if tbl then
+    if tbl and tbl.Loadout[self:GetRank()] then
         for _, v in pairs( tbl.Loadout[self:GetRank()] ) do
             self:Give(v)
             
@@ -365,8 +365,8 @@ end
 function meta:RanksPlayerModels()
 
     local tbl = self:GetJobRanksTable()
-
-    if tbl then
+    
+    if tbl and tbl.Models[self:GetRank()] then
         self:SetModel( tbl.Models[self:GetRank()][math.random( #tbl.Models[ self:GetRank() ] )] )
     end
 

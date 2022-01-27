@@ -167,7 +167,7 @@ function JRS:OpenMenu()
             if teamJobsRanksTable then
                 for k,v in pairs( teamJobsRanksTable.RankName ) do
                     local default = false
-                    if k == JRS.ClientTempRankDB[ply:SteamID64()][selectedTeam] then 
+                     if selectedTeam and JRS.ClientTempRankDB[ply:SteamID64()] and k == JRS.ClientTempRankDB[ply:SteamID64()][selectedTeam] then 
                         default = true
                     end
 

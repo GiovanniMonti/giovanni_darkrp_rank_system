@@ -29,7 +29,7 @@ JRS.CFG.AddRankToJobName = true
         CreateRanksTable(1, 4 , ".", {2} )
 
     Create a rank for the rankstable last ranktable created.
-        CreateRank( RankID, RankName, Prefix, Loadout, CanPromote, MaxPromoRank,PlayerModels )
+        CreateRank( RankID, RankName, Prefix, Loadout, CanPromote, MaxPromoRank, PlayerModels, SalaryBonus )
 
         RankID : the number ID of the rank you are creating, start from 0 and go up. (Integer)
         RankName : The name of the rank you are creating. (String)
@@ -38,6 +38,7 @@ JRS.CFG.AddRankToJobName = true
         CanPromote : If a rank can promote ranks lower than itself or not. (boolean - true or false )
         MaxPromoRank : The highest rank this rank can promote. only if CanPromote = true. (integer)
         PlayerModels : A Table of the names of the playermodels you want to use, will choose randomly in the table. (Table of string - if nil does nothing)
+        SalaryBonus : Number percentage of base salary that you gain extra with this rank (Number)
 
     Set a job for a rankstable (you can use the same on multiple jobs.)
         GiveJobRankTable( RankTableID , TEAM_NAME )
@@ -58,10 +59,10 @@ timer.Simple(0, function()
     -- You can setup rank tables below here.
     -- here is a example of the syntax, feel free to remove or comment out.
     CreateRanksTable(1, 4 , ".", {2} )
-        CreateRank( 0, "Rank 1", "JOB-RNK-1", {"weapon_pistol"}, false, nil )
-        CreateRank( 1, "Rank 2", "JOB-RNK-2", {"weapon_pistol","weapon_smg1"}, false, 0, nil )
-        CreateRank( 2, "Rank 3", "JOB-RNK-3", {"weapon_pistol","weapon_smg1"}, true, 2, {"models/player/combine_super_soldier.mdl"} )
-        CreateRank( 3, "Rank 4", "JOB-RNK-4", {"weapon_pistol","weapon_smg1"}, true, 2, nil )
+        CreateRank( 0, "Rank 1", "JOB-RNK-1", {"weapon_pistol"}, false, nil, nil, 2 )
+        CreateRank( 1, "Rank 2", "JOB-RNK-2", {"weapon_pistol","weapon_smg1"}, false, 0, nil, 4 )
+        CreateRank( 2, "Rank 3", "JOB-RNK-3", {"weapon_pistol","weapon_smg1"}, true, 2, {"models/player/combine_super_soldier.mdl"}, 5 )
+        CreateRank( 3, "Rank 4", "JOB-RNK-4", {"weapon_pistol","weapon_smg1"}, true, 2, nil, 50 )
 
     GiveJobRankTable(1 , TEAM_CITIZEN )
 

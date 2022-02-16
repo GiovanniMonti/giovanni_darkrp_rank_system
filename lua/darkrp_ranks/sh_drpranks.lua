@@ -5,8 +5,7 @@ JRS.JobRankTables = JRS.JobRankTables or {}
 
 local CurID = nil
 
-function CreateRanksTable( JobRankTableID, MaxRank , PrefixSeperator, OtherPromoPerms )
-    CurID = JobRankTableID
+function CreateRanksTable( JobRankTableID, MaxRank , PrefixSeperator, OtherPromoPerms )    
 
     JRS.JobRanks[JobRankTableID] = {}
     JRS.JobRanks[JobRankTableID].MaxRank = MaxRank
@@ -19,10 +18,12 @@ function CreateRanksTable( JobRankTableID, MaxRank , PrefixSeperator, OtherPromo
     JRS.JobRanks[JobRankTableID].CanPromote = {}
     JRS.JobRanks[JobRankTableID].MaxPromoRank = {}
     JRS.JobRanks[JobRankTableID].Models = {}
+    JRS.JobRanks[JobRankTableID].BonusSalary = {}
 
+    CurID = JobRankTableID
 end
 
-function CreateRank( RankID, RankName, Prefix, Loadout, CanPromote, MaxPromoRank, Models )
+function CreateRank( RankID, RankName, Prefix, Loadout, CanPromote, MaxPromoRank, Models, BonusSalary )
 
     if JRS.JobRanks[CurID] then 
 
@@ -32,7 +33,7 @@ function CreateRank( RankID, RankName, Prefix, Loadout, CanPromote, MaxPromoRank
         JRS.JobRanks[CurID].Models[RankID] = Models or false 
         JRS.JobRanks[CurID].CanPromote[RankID] = CanPromote or false
         JRS.JobRanks[CurID].MaxPromoRank[RankID] = MaxPromoRank or  JRS.JobRanks[CurID].MaxRank -- if CanPromote false then this is useless, if this is nil, it will be the highest rank
-        
+        JRS.JobRanks[CurID].BonusSalary[RankID] = BonusSalary
         
         if Models then
             for _,v in pairs( Models ) do
@@ -113,7 +114,7 @@ end
 function IsPlyNick( nick )
     for _, v in pairs( player.GetAll() ) do
         
-        if string.find( string.lower( v:Nick() ), string.lower( nick ) ) then return v end
+        if string.find( string.lower( v:Nick() ), string.lower( nick ), 1, true ) then return v end
         if (v:SteamID64() == nick) or (v:SteamID() == nick) then return v end
         
     end

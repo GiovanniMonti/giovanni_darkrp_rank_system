@@ -118,6 +118,8 @@ function meta:RankPromote(num, cteam)
     if num and JRS.JobRankTables[cteam] then
         self:SetRank( num )
         self:RanksLoadout()
+        self:RanksPlayerModels()
+        self:RanksBonusSalary(true)
         
         JRS.DrpRanksPlayerData[self:SteamID64()] = JRS.DrpRanksPlayerData[self:SteamID64()] or {}
         JRS.DrpRanksPlayerData[self:SteamID64()][cteam] = JRS.DrpRanksPlayerData[self:SteamID64()][cteam] or {}
@@ -138,6 +140,7 @@ function meta:JRS_ManageSpawn()
 
     self:RanksLoadout()
     self:RanksPlayerModels()
+    self:RanksBonusSalary(false)
 
 end
 
@@ -351,12 +354,11 @@ end )
 
 
 function meta:RanksLoadout()
-    local tbl =  self:GetJobRanksTable()
+    local tbl = self:GetJobRanksTable()
     
     if tbl and tbl.Loadout[self:GetRank()] then
         for _, v in pairs( tbl.Loadout[self:GetRank()] ) do
             self:Give(v)
-            
         end
     end
 
@@ -367,9 +369,24 @@ function meta:RanksPlayerModels()
     local tbl = self:GetJobRanksTable()
     
     if tbl and tbl.Models[self:GetRank()] then
-        self:SetModel( tbl.Models[self:GetRank()][math.random( #tbl.Models[ self:GetRank() ] )] )
+        self:SetModel( tbl.Models[self:GetRank()][ math.random( #tbl.Models[ self:GetRank() ] ) ] )
     end
 
+end
+
+function meta:RanksBonusSalary(RankChanged)
+
+    local tbl = self:GetJobRanksTable()
+    local bonus = tbl.BonusSalary[self:GetRank()]
+
+    if tbl and bonus then
+        local salary = self:getJobTable().salary
+        bonus = salary/100 * bonus -- as a % of salary
+        self:setDarkRPVar("salary", salary + bonus)
+        if RankChanged then
+            JRS.LegacyNotifyPlayer(self, "Your salary has chaged to a total of " .. tostring(salary + bonus) .. "€ (" ..  tostring(bonus) .. "€ rank bonus).", NOTIFY_GENERIC, 3  )
+        end
+    end
 end
 
 hook.Add("PlayerSpawn", "jrs_managespawn", function(ply)

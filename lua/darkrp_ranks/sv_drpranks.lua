@@ -137,11 +137,12 @@ function meta:JRS_ManageSpawn()
       self:SetRank(0)
       JRS.DrpRanksPlayerData[self:SteamID64()][self:Team()].Rank = 0
     end
-
-    self:RanksLoadout()
-    self:RanksPlayerModels()
-    self:RanksBonusSalary(false)
-
+    -- SetRank uses a NWvar which may take some time?
+    timer.Simple(0, function()
+        self:RanksLoadout()
+        self:RanksPlayerModels()
+        self:RanksBonusSalary(false)
+    end)
 end
 
 function meta:PlayerCanPromote(sPly, rank, cteam)

@@ -90,7 +90,7 @@ function meta:GetJobRanksTable(cteam)
     cteam = cteam or self:Team()
 
     local loc = JRS.JobRankTables[cteam]
-    if !loc then return false end
+    if !loc then return nil end
 
     return JRS.JobRanks[loc]
     

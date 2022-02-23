@@ -377,8 +377,9 @@ end
 
 function meta:RanksBonusSalary(RankChanged)
 
-    local tbl = self:GetJobRanksTable()
-    local bonus = tbl.BonusSalary[self:GetRank()]
+    local tbl,bonus = self:GetJobRanksTable()
+    
+    if tbl then bonus = tbl.BonusSalary[self:GetRank()] end
 
     if tbl and bonus then
         local salary = self:getJobTable().salary

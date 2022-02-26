@@ -76,6 +76,7 @@ local NOTIFY_CLEANUP = 4
 
 function JRS.LegacyNotifyPlayer(ply, text, type, length)
     length = length or 2
+    type = type or 0
     net.Start("LegacyNotifySv")
         net.WriteString(text)
         net.WriteInt(type, 4)

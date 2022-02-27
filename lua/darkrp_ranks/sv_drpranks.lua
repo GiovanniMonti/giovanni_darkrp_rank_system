@@ -287,14 +287,14 @@ util.AddNetworkString("OpenJRSMenu")
 
 hook.Add("PlayerSay", "JRS_ChatCommands", function(ply, text)
 
-    if string.StartWith( string.lower(text), JRS.CFG.OpenMenuCommand) then
+  --[[  if string.StartWith( string.lower(text), JRS.CFG.OpenMenuCommand) then
         if ply:GetRankVar("CanPromote") or CAMI.PlayerHasAccess(ply, "Promote_Any") then
             net.Start("OpenJRSMenu")
             net.Send(ply)
         end
         return ""
     end
-
+    ]]
     local StartsWithPromo = string.StartWith(string.lower(text), JRS.CFG.PromoCommand .. " ")
     local StartsWithDemo = string.StartWith(string.lower(text), JRS.CFG.DemoCommand .. " ")
 

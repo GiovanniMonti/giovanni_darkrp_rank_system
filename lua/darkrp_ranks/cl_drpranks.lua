@@ -19,7 +19,6 @@ function JRS.RequestPlyRanks(ply)
 end
 
 net.Receive("JRS_RetPlRnk", function()
-
     local iLen = net.ReadUInt(8)
     local pl = player.GetByAccountID( net.ReadUInt(28) )
     JRS.ClientTempRankDB[ pl:SteamID64() ]  = JRS.ClientTempRankDB[ pl:SteamID64() ] or {}
@@ -49,8 +48,6 @@ surface.CreateFont( "JRS_MenuData",{
 
 } )
 
-
-
 ---------------------------------------------------
 
 local function TeamPromoDemo(sply, rank, steam)
@@ -67,7 +64,7 @@ local function TeamPromoDemo(sply, rank, steam)
     
 end
 ----------------------------------------------------
-
+--[[
 net.Receive("OpenJRSMenu", function() JRS:OpenMenu() end)
 
 function JRS:OpenMenu()
@@ -151,7 +148,7 @@ function JRS:OpenMenu()
                     default = true
                     selectedTeam = k
                 end
-                joblist:AddChoice(team.GetName(k), k,default)    
+                joblist:AddChoice(team.GetName(k), k ,default)    
             end
 
             local selectedJobInfo = vgui.Create( "DLabel", Frame )
@@ -181,6 +178,9 @@ function JRS:OpenMenu()
                     selectedJobRank:Clear()
                     for k,v in pairs( teamJobsRanksTable.RankName ) do
                         local default = false
+
+                        print(JRS.ClientTempRankDB)
+                        PrintTable( JRS.ClientTempRankDB )
                         if k == JRS.ClientTempRankDB[ply:SteamID64()][data] then 
                             default = true
                         end
@@ -205,26 +205,6 @@ function JRS:OpenMenu()
                     TeamPromoDemo(ply,selectedrank,selectedTeam)
                 end
             end
-
-            --[[
-            local PromoButton = vgui.Create("DButton", Frame)
-            PromoButton:SetText("Promote selected")
-            PromoButton:SetPos( w*0.60, hbuttons )	
-            PromoButton:SetSize(w*0.17, h*0.04 )
-
-            function PromoButton.DoClick()
-                TeamPromoDemo(ply,"promo",selectedTeam)
-            end
-
-            local DemoButton = vgui.Create("DButton", Frame)
-            DemoButton:SetText("Demote selected")
-            DemoButton:SetPos( w*0.774, hbuttons )	
-            DemoButton:SetSize(w*0.17, h*0.04 )
-
-            function DemoButton.DoClick()
-                TeamPromoDemo(ply,"demo",selectedTeam)
-            end
-            ]]
         end)
     end
     
@@ -270,3 +250,4 @@ function JRS:OpenMenu()
     end
     
 end
+]]

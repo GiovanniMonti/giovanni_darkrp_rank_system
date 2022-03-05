@@ -220,7 +220,7 @@ end
 ----------- for the clientside menu.
 
 function meta:PromoDemoTeam(sPly, rank, setrank, team)
-    local CurRank = JRS.DrpRanksPlayerData[self:SteamID64()][team].Rank
+    local CurRank = JRS.DrpRanksPlayerData[sPly:SteamID64()][team].Rank
     local newrank = 0
     local PromoOrDemoStr
 

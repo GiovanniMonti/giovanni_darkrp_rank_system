@@ -97,7 +97,7 @@ function meta:GetJobRanksTable(cteam)
 end
 
 function meta:GetRankName()
-    if !self:GetJobRanksTable() then return false end
+    if !self:GetJobRanksTable() then return '' end
     return self:GetJobRanksTable().RankName[self:GetRank()]
 end
 

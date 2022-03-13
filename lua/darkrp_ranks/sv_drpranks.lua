@@ -87,12 +87,12 @@ function JRS.LegacyNotifyPlayer(ply, text, type, length)
         net.Send(ply)
     end
 end
-
+--[[
 CAMI.RegisterPrivilege({
     Name = "Promote_Any",
     MinAccess = "user"
 })
-
+]]
 util.AddNetworkString( "JRSClientMenu" )
 
 local meta = FindMetaTable("Player")
@@ -173,7 +173,7 @@ function meta:PlayerCanPromote(sPly, rank, cteam)
         return false
     end
 
-    if CAMI.PlayerHasAccess(self, "Promote_Any") then 
+    if JRS.CFG.CustomAdminCheck(self) then   
         return true
     elseif not PlyRankTbl then 
         return false

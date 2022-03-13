@@ -1,4 +1,6 @@
 JRS.DrpRanksPlayerData = JRS.DrpRanksPlayerData or {}
+
+JRS.CFG = JRS.CFG or {}
 -- data saving - json file
 hook.Add("Initialize", "jrs_DBCreate", function()
     if file.Exists("drpranksdata/", "DATA") then

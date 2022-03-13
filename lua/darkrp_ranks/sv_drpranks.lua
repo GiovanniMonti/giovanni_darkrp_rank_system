@@ -175,9 +175,11 @@ function meta:PlayerCanPromote(sPly, rank, cteam)
 
     if CAMI.PlayerHasAccess(self, "Promote_Any") then 
         return true
+    elseif not PlyRankTbl then 
+        return false
     end
 
-    if self:GetRank() > sPlyRank and rank < self:GetRank() and rank < sPlyRankTbl.MaxPromoRank[self:GetRank()]  then
+    if self:GetRank() > sPlyRank and rank < self:GetRank() and rank < sPlyRankTbl.MaxPromoRank[self:GetRank()] and PlyRankTbl.CanPromote then
         for _, v in pairs( PlyRankTbl.OtherPromoPerms ) do
             if JRS.JobRankTables[sPlyTeam] == v then return true end
         end

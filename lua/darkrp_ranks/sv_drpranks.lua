@@ -1,6 +1,4 @@
 JRS.DrpRanksPlayerData = JRS.DrpRanksPlayerData or {}
-
-JRS.CFG = JRS.CFG or {}
 -- data saving - json file
 hook.Add("Initialize", "jrs_DBCreate", function()
     if file.Exists("drpranksdata/", "DATA") then
@@ -89,12 +87,12 @@ function JRS.LegacyNotifyPlayer(ply, text, type, length)
         net.Send(ply)
     end
 end
---[[
+
 CAMI.RegisterPrivilege({
     Name = "Promote_Any",
     MinAccess = "user"
 })
-]]
+
 util.AddNetworkString( "JRSClientMenu" )
 
 local meta = FindMetaTable("Player")
@@ -175,13 +173,11 @@ function meta:PlayerCanPromote(sPly, rank, cteam)
         return false
     end
 
-    if JRS.CFG.CustomAdminCheck(self) then   
+    if CAMI.PlayerHasAccess(self, "Promote_Any") then 
         return true
-    elseif not PlyRankTbl then 
-        return false
     end
 
-    if self:GetRank() > sPlyRank and rank < self:GetRank() and rank < sPlyRankTbl.MaxPromoRank[self:GetRank()] and PlyRankTbl.CanPromote then
+    if self:GetRank() > sPlyRank and rank < self:GetRank() and rank < sPlyRankTbl.MaxPromoRank[self:GetRank()]  then
         for _, v in pairs( PlyRankTbl.OtherPromoPerms ) do
             if JRS.JobRankTables[sPlyTeam] == v then return true end
         end

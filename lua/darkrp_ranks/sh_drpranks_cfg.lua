@@ -12,13 +12,6 @@ JRS.CFG.OpenMenuCommand = JRS.CFG.Prefix .. "gmenu"
 JRS.CFG.AddRankToJobName = true
 -- Change name of the darkrp jobs to the template : jobname (rankname)
 
-JRS.CFG.CustomAdminCheck(ply)
-    if ply:IsSuperAdmin() then
-        return true
-    end
-    return false
-end
--- configure what usergroups are able to promote/demote regardless of rank
 --[[
     Config Usage & formatting.
 

@@ -90,7 +90,7 @@ end
 
 CAMI.RegisterPrivilege({
     Name = "Promote_Any",
-    MinAccess = "user"
+    MinAccess = "admin"
 })
 
 util.AddNetworkString( "JRSClientMenu" )

@@ -398,3 +398,18 @@ hook.Add("PlayerSpawn", "jrs_managespawn", function(ply)
     ply:JRS_ManageSpawn()
 
 end)
+
+hook.Add("PlayerChangedTeam","jrs:manageteamchange", function(ply,old,new)
+
+    local tbl = self:GetJobRanksTable(old)
+    if tbl and tbl.Loadout[self:GetRank()] then
+        for _, v in pairs( tbl.Loadout[self:GetRank()] ) do
+            self:StripWeapon(v)
+        end
+    end
+    
+    JRS.DrpRanksPlayerData[ply:SteamID64()][new] = JRS.DrpRanksPlayerData[ply:SteamID64()][new] or {}
+    
+    ply:JRS_ManageSpawn()
+
+end)

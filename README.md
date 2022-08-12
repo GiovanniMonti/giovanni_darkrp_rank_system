@@ -11,4 +11,4 @@ CAMI permissions or superadmin to promote without having the needed rank.
 
 Data is saved in a simple JSON file in data/drpranks on serverside, due to the low size of saved data i dont believe SQL to be necessary.
 
-if you have any issues or questions feel free to messege me on discord: Giovanni Monti#5749
+if you have any issues or questions feel free to messege me on discord: Giovanni#8895

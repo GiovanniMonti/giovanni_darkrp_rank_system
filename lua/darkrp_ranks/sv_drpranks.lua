@@ -401,10 +401,10 @@ end)
 
 hook.Add("PlayerChangedTeam","jrs:manageteamchange", function(ply,old,new)
 
-    local tbl = self:GetJobRanksTable(old)
-    if tbl and tbl.Loadout[self:GetRank()] then
-        for _, v in pairs( tbl.Loadout[self:GetRank()] ) do
-            self:StripWeapon(v)
+    local tbl = ply:GetJobRanksTable(old)
+    if tbl and tbl.Loadout[ply:GetRank()] then
+        for _, v in pairs( tbl.Loadout[ply:GetRank()] ) do
+            ply:StripWeapon(v)
         end
     end
     
